@@ -10,12 +10,14 @@ import { UserBody } from "../../contracts/user.body";
 
 const userFixtures = [
 	{
-		name: "test1",
+		firstName: "test1first",
+		lastName: "test1last",
 		email: "test-user+1@panenco.com",
 		password: "password1",
 	},
 	{
-		name: "test2",
+		firstName: "test2first",
+		lastName: "test2last",
 		email: "test-user+2@panenco.com",
 		password: "password2",
 	},
@@ -44,15 +46,15 @@ describe("Users handler tests", async () => {
         const res = await getList(null);
 
         expect(res.length).equal(2);
-        expect(res.some((x) => x.name === "test1")).true;
-        expect(res.some((x) => x.name === "test2")).true;
+        expect(res.some((x) => x.firstName === "test1first")).true;
+        expect(res.some((x) => x.firstName === "test2first")).true;
     });
 
     it("should search users", async () => {
         const res = await getList("test1");
 
         expect(res.length).equal(1);
-        expect(res.some((x) => x.name === "test1")).true;
+        expect(res.some((x) => x.firstName === "test1first")).true;
     });
 
     it("should get user by id", async () => {
@@ -74,20 +76,22 @@ describe("Users handler tests", async () => {
     it("should create user", async () => {
         const body = {
             email: "test-user+3@panenco.com",
-            name: "test3",
+            firstName: "test3first",
+            lastName: "test3last",
             password: "password3",
         } as UserBody;
         const res = await create(body);
 
-        expect(res.name).equal("test3");
+        expect(res.firstName).equal("test3first");
+        expect(res.lastName).equal("test3last");
         expect(res.email).equal("test-user+3@panenco.com");
         // expect(res.password).undefined; // TODO
     });
 
     it("should update user", async () => {
-        const body = { name: "updated"} as UserBody;
+        const body = { firstName: "updated"} as UserBody;
         const res = await update(users[0].id, body);
-        expect(res.name).equal("updated");
+        expect(res.firstName).equal("updated");
     });
 
     it("should delete user", async () => {

@@ -10,12 +10,14 @@ import { UserBody } from "../../contracts/user.body";
 
 const userFixtures = [
 	{
-		name: "test1",
+		firstName: "test1first",
+		lastName: "test1last",
 		email: "test-user+1@panenco.com",
 		password: "password1",
 	},
 	{
-		name: "test2",
+		firstName: "test2first",
+		lastName: "test2last",
 		email: "test-user+2@panenco.com",
 		password: "password2",
 	},
@@ -104,7 +106,7 @@ describe("Integration tests", () => {
                 .get(`/api/users/${createResponse.id}`)
         		.set("x-auth", token)
                 .expect(200);
-            expect(getResponse.name).equal("test1");
+            expect(getResponse.firstName).equal("test1first");
 
             // Successfully update user
             const { body: updateResponse } = await request(app.getHttpServer())
@@ -115,7 +117,8 @@ describe("Integration tests", () => {
                 } as UserBody)
                 .expect(200);
 
-            expect(updateResponse.name).equal("test1");
+            expect(updateResponse.firstName).equal("test1first");
+            expect(updateResponse.lastName).equal("test1last");
             expect(updateResponse.email).equal("test-user+updated@panenco.com");
             expect(updateResponse.password).undefined; // middleware transformed the object to not include the password
 
@@ -126,7 +129,7 @@ describe("Integration tests", () => {
                 .expect(200);
 
             const newUser = getAllResponse.find(
-                (x: UserBody) => x.name === getResponse.name
+                (x: UserBody) => x.firstName === getResponse.firstName
             );
             expect(newUser).not.undefined;
             expect(newUser.email).equal("test-user+updated@panenco.com");

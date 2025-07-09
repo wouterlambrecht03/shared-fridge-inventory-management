@@ -8,7 +8,8 @@ export const getList = async (search: string | null): Promise<UserView[]>  => {
         users = await prisma.user.findMany({
             where: {
                 OR: [
-                    {name: { contains: search, mode: "insensitive" as const}},
+                    {firstName: { contains: search, mode: "insensitive" as const}},
+                    {lastName: { contains: search, mode: "insensitive" as const}},
                     {email: { contains: search, mode: "insensitive" as const}},
                 ]
             }

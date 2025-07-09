@@ -7,8 +7,11 @@ class UserBody {
 	// We can expose the properties we want included one by one
 	@Expose()
 	@IsString()
-	// @IsOptional()
-	public name: string;
+	public firstName: string;
+
+	@Expose()
+	@IsString()
+	public lastName: string;
 
 	@Expose()
 	// We can start adding validation decorators that specify exactly what we expect from the object we will be validating
