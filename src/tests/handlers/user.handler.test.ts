@@ -23,19 +23,22 @@ const userFixtures = [
 	},
 ];
 
-describe("Users handler tests", async () => {
+describe("Users handler tests", () => {
     let users: any[];
 
-    const hashedUserFixtures = await Promise.all(
-        userFixtures.map(async (u) => {
-            const hashedPassword = await bcrypt.hash(u.password, 10);
-            u.password = hashedPassword;
-            return u;
-        })
-    );
-
 	beforeEach(async () => {
+        const hashedUserFixtures = await Promise.all(
+            userFixtures.map(async (u) => {
+                const hashedPassword = await bcrypt.hash(u.password, 10);
+                u.password = hashedPassword;
+                return u;
+            })
+        );
+        
+        await prisma.product.deleteMany();
+        await prisma.fridge.deleteMany();
         await prisma.user.deleteMany();
+
         await prisma.user.createMany({
             data: hashedUserFixtures
         })

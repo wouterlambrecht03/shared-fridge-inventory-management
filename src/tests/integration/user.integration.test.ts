@@ -61,7 +61,8 @@ describe("Integration tests", () => {
 		});
 
 		beforeEach(async () => {
-			// UserStore.users = []; // Clean up users before each test
+            await prisma.product.deleteMany();
+            await prisma.fridge.deleteMany();
             await prisma.user.deleteMany();
 		});
 
