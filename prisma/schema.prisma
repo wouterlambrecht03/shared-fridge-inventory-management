@@ -36,9 +36,9 @@ model Product {
   id        String   @id @default(uuid())
   name      String
   space     Int
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
-  fridge    Fridge   @relation(fields: [fridgeId], references: [id])
+  fridge    Fridge   @relation(fields: [fridgeId], references: [id], onDelete: Cascade)
   fridgeId  String
   // recipes   RecipeProduct[]
   createdAt DateTime @default(now())
@@ -51,7 +51,7 @@ model Recipe {
   id        String   @id @default(uuid())
   name      String
   description String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   products  RecipeProduct[]
   createdAt DateTime @default(now())
