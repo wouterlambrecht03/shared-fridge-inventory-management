@@ -16,13 +16,11 @@ class UserBody {
 	@Expose()
 	// We can start adding validation decorators that specify exactly what we expect from the object we will be validating
 	@IsEmail()
-	// @IsOptional()
 	public email: string;
 
 	@Expose()
 	@IsString()
 	@Length(8)
-	// @IsOptional()
 	public password: string;
 }
 

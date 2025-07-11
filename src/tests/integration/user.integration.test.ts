@@ -7,6 +7,7 @@ import request from "supertest";
 import { AppModule } from "../../app.module";
 import { prisma } from "../../lib/prisma";
 import { UserBody } from "../../contracts/user.body";
+import { UpdateUserBody } from "../../contracts/updateUser.body";
 
 const userFixtures = [
 	{
@@ -116,7 +117,7 @@ describe("Integration tests", () => {
         		.set("x-auth", token)
                 .send({
                     email: "test-user+updated@panenco.com",
-                } as UserBody)
+                } as UpdateUserBody)
                 .expect(200);
 
             expect(updateResponse.firstName).equal("test1first");

@@ -1,19 +1,18 @@
 import { plainToInstance } from "class-transformer";
-import { UserBody } from "../../../contracts/user.body";
 import { UserView } from "../../../contracts/user.view";
 
 import { NotFoundException } from "@nestjs/common";
 import { prisma } from "../../../lib/prisma";
 import bcrypt from "bcryptjs";
+import { UpdateUserBody } from "../../../contracts/updateUser.body";
 
-export const update = async (idString: string, body: UserBody): Promise<UserView>  => {
+export const update = async (idString: string, body: UpdateUserBody): Promise<UserView>  => {
     const user = await prisma.user.findUnique({
       where: { id: idString },
     })
     if (!user) {
       throw new NotFoundException("User not found");
     }
-	// const updated = UserStore.update(id, { ...user, ...body });
 	const updateData: any = {};
 	if (body.firstName !== undefined) updateData.firstName = body.firstName;
 	if (body.lastName !== undefined) updateData.lastName = body.lastName;
