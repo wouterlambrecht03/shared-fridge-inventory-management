@@ -177,7 +177,7 @@ describe("Recipes handler tests", () => {
         const res = await update(users[0].id, recipes[0].id, body);
 
         expect(res.name).equal("recipe1updated");
-        expect(res.description).equal("recipe1description");
+        expect(res.description).equal(recipes[0].description);
         expect(res.userId).equal(users[0].id);
         expect(res.productNames).to.be.a("undefined");
     });
@@ -191,7 +191,7 @@ describe("Recipes handler tests", () => {
         } as UpdateRecipeBody;
         const res = await update(users[0].id, recipes[0].id, body);
 
-        expect(res.name).equal("recipe1");
+        expect(res.name).equal(recipes[0].name);
         expect(res.description).equal("recipe1descriptionUpdated");
         expect(res.userId).equal(users[0].id);
         expect(res.productNames).to.be.a("undefined");
@@ -206,8 +206,8 @@ describe("Recipes handler tests", () => {
         } as UpdateRecipeBody;
         const res = await update(users[0].id, recipes[0].id, body);
 
-        expect(res.name).equal("recipe1");
-        expect(res.description).equal("recipe1description");
+        expect(res.name).equal(recipes[0].name);
+        expect(res.description).equal(recipes[0].description);
         expect(res.userId).equal(users[0].id);
         expect(res.productNames).to.be.a("undefined");
 
@@ -215,6 +215,8 @@ describe("Recipes handler tests", () => {
         expect(recipe.productNames).to.be.an("array");
         expect(recipe.productNames.length).equal(3);
         expect(recipe.productNames.some((p) => p == "product1")).true;
+        expect(recipe.productNames.some((p) => p == "product3")).true;
+        expect(recipe.productNames.some((p) => p == "product4")).true;
     });
 
     it("should not modify a recipe if the user is not the owner", async () => {

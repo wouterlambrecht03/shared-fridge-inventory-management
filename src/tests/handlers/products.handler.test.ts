@@ -132,6 +132,16 @@ describe("Products handler tests", () => {
         expect(res.length).equal(0);
     });
 
+    it("should get no products when both a location and a fridge are specified", async () => {
+        try {
+            await getList(users[0].id, fridges[1], fridges[1].location);
+        } catch (error) {
+            expect(error.message).equal("It is not allowed to specify both a fridge id and a location");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
+    });
+
     it("should get a product by id", async () => {
         const res = await get(products[0].id);
 
@@ -219,6 +229,16 @@ describe("Products handler tests", () => {
         expect(updatedProductList.length).equal(2);
         expect(updatedProductList.some((x) => x.userId === users[0].id)).false;
         expect(updatedProductList.every((x) => x.userId === users[1].id)).true;
+    });
+
+    it("should gift no products when both a location and a fridge are specified", async () => {
+        try {
+            await giftList(users[0].id, users[1].id, fridges[1], fridges[1].location);
+        } catch (error) {
+            expect(error.message).equal("It is not allowed to specify both a fridge id and a location");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
     });
 
     it("should delete a product", async () => {
