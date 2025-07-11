@@ -152,10 +152,9 @@ describe("Products handler tests", () => {
         const body = {
             name: "product3",
             space: 1000,
-            userId: users[0].id,
             fridgeId: fridges[0].id
         } as ProductBody;
-        const res = await create(body);
+        const res = await create(users[0].id, body);
 
         expect(res.name).equal("product3");
         expect(res.space).equal(1000);
@@ -167,11 +166,10 @@ describe("Products handler tests", () => {
         const body = {
             name: "product3",
             space: 100000 - 2000 - 500 + 1,
-            userId: users[0].id,
             fridgeId: fridges[0].id
         } as ProductBody;
         try {
-            await create(body);
+            await create(users[0].id, body);
         } catch (error) {
             expect(error.message).equal("Fridge has not enough capacity");
             return;
@@ -180,8 +178,29 @@ describe("Products handler tests", () => {
     });
 
     it("should gift a product to another user", async () => {
-        const res = await gift(products[0].id, users[1].id);
-        expect(res.userId).equal(users[1].id); // TODO: check if gift to yourself?
+        const res = await gift(products[0].id, users[0].id, users[1].id);
+
+        expect(res.userId).equal(users[1].id);
+    });
+
+    it("should gift a product to the same user", async () => {
+        try {
+            await gift(products[0].id, users[0].id, users[0].id);
+        } catch (error) {
+            expect(error.message).equal("You can't gift a product to yourself");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
+    });
+
+    it("should not gift a product to another user if the user is not the owner", async () => {
+        try {
+            await gift(products[0].id, users[1].id, users[0].id);
+        } catch (error) {
+            expect(error.message).equal("You are not the owner of this product");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
     });
 
     it("should gift all products of a user to another user", async () => {
@@ -203,11 +222,21 @@ describe("Products handler tests", () => {
     });
 
     it("should delete a product", async () => {
-        await del(products[0].id)
+        await del(users[0].id, products[0].id)
         
         const updatedProductList = await prisma.product.findMany();
         expect(updatedProductList.length).equal(1);
         expect(updatedProductList.some((x) => x.id === products[0].id)).false;
+    });
+
+    it("should not delete a product if the user is not the owner", async () => {
+        try {
+            await del(users[1].id, products[0].id)
+        } catch (error) {
+            expect(error.message).equal("You are not the owner of this product");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
     });
 
     it("should delete all products of a user from all fridges", async () => {

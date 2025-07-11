@@ -11,9 +11,9 @@ export class ProductBody {
 	@IsInt()
 	public space: number;
 
-	@Expose()
-	@IsUUID()
-	public userId: string;
+	// @Expose()
+	// @IsUUID()
+	// public userId: string;
 
 	@Expose()
 	@IsUUID()

@@ -23,8 +23,9 @@ export class ProductController {
     @HttpCode(HttpStatus.CREATED)
 	@ApiOperation({ summary: "Put a product in a fridge" })
 	@ApiResponse({ status: 201, description: "Product added successfully" })
-	async createProduct(@Body() body: ProductBody): Promise<ProductView> {
-        return create(body);
+	async createProduct(@Req() req: Request, @Body() body: ProductBody): Promise<ProductView> {
+		const userId = req["user"]?.userId;
+        return create(userId, body);
 	}
 
     @Patch(":id")
@@ -32,8 +33,9 @@ export class ProductController {
 	@ApiSecurity("x-auth")
 	@ApiOperation({ summary: "Gift a product to another user" })
 	@ApiResponse({ status: 200, description: "Product gifted successfully" })
-	async giftProduct(@Body() recv: ReceiverBody, @Param("id") id: string): Promise<ProductView>  {
-		return gift(id, recv.receiverId);
+	async giftProduct(@Req() req: Request, @Body() recv: ReceiverBody, @Param("id") id: string): Promise<ProductView>  {
+		const userId = req["user"]?.userId;
+		return gift(id, userId, recv.receiverId);
 	}
 
 	@Delete(":id")
@@ -42,8 +44,9 @@ export class ProductController {
 	@ApiSecurity("x-auth")
 	@ApiOperation({ summary: "Delete a product from a fridge" })
 	@ApiResponse({ status: 204, description: "Product deleted successfully" })
-	async deleteProduct(@Param("id") id: string) {
-		await del(id);
+	async deleteProduct(@Req() req: Request, @Param("id") id: string) {
+		const userId = req["user"]?.userId;
+		await del(userId, id);
 	}
 
 	@Get(":id")

@@ -20,8 +20,9 @@ export class RecipeController {
     @HttpCode(HttpStatus.CREATED)
 	@ApiOperation({ summary: "Create a new recipe" })
 	@ApiResponse({ status: 201, description: "Recipe created successfully" })
-	async create(@Body() body: RecipeBody): Promise<RecipeView> {
-		return create(body);
+	async create(@Req() req: Request, @Body() body: RecipeBody): Promise<RecipeView> {
+		const userId = req["user"]?.userId;
+		return create(userId, body);
 	}
 
     @Delete(":id")
@@ -30,8 +31,9 @@ export class RecipeController {
 	@ApiSecurity("x-auth")
 	@ApiOperation({ summary: "Delete a recipe by its id" })
 	@ApiResponse({ status: 204, description: "Recipe deleted successfully" })
-	async delete(@Param("id") id: string) {
-		await del(id);
+	async delete(@Req() req: Request, @Param("id") id: string) {
+		const userId = req["user"]?.userId;
+		await del(userId, id);
 	}
 
     @Patch(":id")
@@ -39,8 +41,9 @@ export class RecipeController {
 	@ApiSecurity("x-auth")
 	@ApiOperation({ summary: "Update a recipe by its id" })
 	@ApiResponse({ status: 200, description: "Recipe updated successfully" })
-	async update(@Body() body: UpdateRecipeBody, @Param("id") id: string): Promise<RecipeView>  {
-		return update(id, body);
+	async update(@Req() req: Request, @Body() body: UpdateRecipeBody, @Param("id") id: string): Promise<RecipeView>  {
+		const userId = req["user"]?.userId;
+		return update(userId, id, body);
 	}
 
 	@Get()
@@ -65,7 +68,7 @@ export class RecipeController {
     @Get(":id/missing")
 	@UseGuards(JwtAuthGuard)
 	@ApiSecurity("x-auth")
-	@ApiOperation({ summary: "Get all missing ingredients for a recipes" })
+	@ApiOperation({ summary: "Get all missing ingredients for a recipe" })
 	@ApiResponse({ status: 200, description: "Products retrieved successfully" })
 	async getMissingProductList(@Req() req: Request, @Param("id") id: string): Promise<string[]>  {
 		const userId = req["user"]?.userId;

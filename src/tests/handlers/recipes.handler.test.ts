@@ -157,10 +157,9 @@ describe("Recipes handler tests", () => {
         const body = {
             name: "recipe3",
             description: "recipe3description",
-            userId: users[0].id,
             productNames: ["product2"],
         } as RecipeBody;
-        const res = await create(body);
+        const res = await create(users[0].id, body);
 
         expect(res.name).equal("recipe3");
         expect(res.description).equal("recipe3description");
@@ -175,7 +174,7 @@ describe("Recipes handler tests", () => {
             // userId: users[0].id,
             // productNames: ["product1", "product2", "product3"],
         } as UpdateRecipeBody;
-        const res = await update(recipes[0].id, body);
+        const res = await update(users[0].id, recipes[0].id, body);
 
         expect(res.name).equal("recipe1updated");
         expect(res.description).equal("recipe1description");
@@ -190,7 +189,7 @@ describe("Recipes handler tests", () => {
             // userId: users[0].id,
             // productNames: ["product1", "product2", "product3"],
         } as UpdateRecipeBody;
-        const res = await update(recipes[0].id, body);
+        const res = await update(users[0].id, recipes[0].id, body);
 
         expect(res.name).equal("recipe1");
         expect(res.description).equal("recipe1descriptionUpdated");
@@ -205,7 +204,7 @@ describe("Recipes handler tests", () => {
             // userId: users[0].id,
             productNames: ["product1", "product3", "product4"],
         } as UpdateRecipeBody;
-        const res = await update(recipes[0].id, body);
+        const res = await update(users[0].id, recipes[0].id, body);
 
         expect(res.name).equal("recipe1");
         expect(res.description).equal("recipe1description");
@@ -218,17 +217,43 @@ describe("Recipes handler tests", () => {
         expect(recipe.productNames.some((p) => p == "product1")).true;
     });
 
+    it("should not modify a recipe if the user is not the owner", async () => {
+        try {
+            const body = {
+                name: "recipe1updated",
+                // description: "recipe1description",
+                // userId: users[0].id,
+                // productNames: ["product1", "product2", "product3"],
+            } as UpdateRecipeBody;
+            await update(users[1].id, recipes[0].id, body);
+        } catch (error) {
+            expect(error.message).equal("You are not the owner of this recipe");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
+    });
+
     it("should delete a recipe", async () => {
-        await del(recipes[0].id)
+        await del(users[0].id, recipes[0].id)
         
         const updatedRecipeList = await prisma.recipe.findMany();
         expect(updatedRecipeList.length).equal(1);
         expect(updatedRecipeList.some((x) => x.id === products[0].id)).false;
     });
 
+    it("should not delete a recipe if the user is not the owner", async () => {
+        try {
+            await del(users[1].id, recipes[0].id)
+        } catch (error) {
+            expect(error.message).equal("You are not the owner of this recipe");
+            return;
+        }
+        expect(true, "should have thrown an error").false;
+    });
+
     it("should not be able to delete a recipe by unknown id", async () => {
         try {
-            await del("999");
+            await del(users[0].id, "999");
         } catch (error) {
             expect(error.message).equal("Recipe not found");
             return;

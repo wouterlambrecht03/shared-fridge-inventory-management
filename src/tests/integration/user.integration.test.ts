@@ -81,8 +81,10 @@ describe("Integration tests", () => {
         // Get all users again and validate the user is not in the list anymore
 
         it("should crud users", async () => {
-            // unauthorized
-            // await request.post(`/api/users`).expect(401);
+            // Unauthorized
+            await request(app.getHttpServer())
+                .get(`/api/users`)
+                .expect(401);
 
             // create new user
             const { body: createResponse } = await request(app.getHttpServer())
@@ -137,18 +139,44 @@ describe("Integration tests", () => {
             expect(newUser).not.undefined;
             expect(newUser.email).equal("test-user+updated@panenco.com");
 
+
+            const { body: createResponse2 } = await request(app.getHttpServer())
+                    .post(`/api/users`)
+                    .send(userFixtures[1])
+                    .expect(201);
+
+            const { body: getAllResponse2 } = await request(app.getHttpServer())
+                .get(`/api/users`)
+        		.set("x-auth", token)
+                .expect(200);
+
+            expect(getAllResponse2.length).equal(2);
+
             // Delete the newly created user
+            await request(app.getHttpServer())
+                .delete(`/api/users/${createResponse2.id}`)
+        		.set("x-auth", token)
+                .expect(204);
+
+            // Get all users again after deleting the newest user
+            const { body: getAllResponse3 } = await request(app.getHttpServer())
+                .get(`/api/users`)
+        		.set("x-auth", token)
+                .expect(200);
+            expect(getAllResponse3.length).equal(1);
+            expect(getAllResponse3[0].id).equal(createResponse.id);
+
+            // Delete the last user
             await request(app.getHttpServer())
                 .delete(`/api/users/${createResponse.id}`)
         		.set("x-auth", token)
                 .expect(204);
 
-            // Get all users again after deleted the only user
-            const { body: getNoneResponse } = await request(app.getHttpServer())
+            // Unauthorized
+            await request(app.getHttpServer())
                 .get(`/api/users`)
         		.set("x-auth", token)
-                .expect(200);
-            expect(getNoneResponse.length).equal(0);
+                .expect(401);
         });
 
     });
