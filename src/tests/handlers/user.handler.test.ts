@@ -35,6 +35,7 @@ describe("Users handler tests", () => {
             })
         );
         
+        await prisma.recipe.deleteMany();
         await prisma.product.deleteMany();
         await prisma.fridge.deleteMany();
         await prisma.user.deleteMany();

@@ -6,7 +6,6 @@ import request from "supertest";
 
 import { AppModule } from "../../app.module";
 import { prisma } from "../../lib/prisma";
-import { UserBody } from "../../contracts/user.body";
 import bcrypt from "bcryptjs";
 import { ReceiverBody } from "../../contracts/receiver.body";
 import { ProductView } from "../../contracts/product.view";
@@ -105,6 +104,7 @@ describe("Integration tests", () => {
                 })
             );
 
+            await prisma.recipe.deleteMany();
             await prisma.product.deleteMany();
             await prisma.fridge.deleteMany();
             await prisma.user.deleteMany();
