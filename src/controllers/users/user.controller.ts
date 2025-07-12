@@ -9,6 +9,7 @@ import { SearchQuery } from "../../contracts/search.query";
 import { UserView } from "../../contracts/user.view";
 import { JwtAuthGuard } from "../../guards/jwt-auth.guard";
 import { ApiOperation, ApiResponse, ApiSecurity, ApiTags } from "@nestjs/swagger";
+import { UpdateUserBody } from "../../contracts/updateUser.body";
 
 @ApiTags("users")
 @Controller("users")
@@ -45,7 +46,7 @@ export class UserController {
 	@ApiSecurity("x-auth")
 	@ApiOperation({ summary: "Update a userdata by its id" })
 	@ApiResponse({ status: 200, description: "Userdata updated successfully" })
-	async update(@Body() body: UserBody, @Param("id") id: string): Promise<UserView>  {
+	async update(@Body() body: UpdateUserBody, @Param("id") id: string): Promise<UserView>  {
 		return update(id, body);
 	}
 

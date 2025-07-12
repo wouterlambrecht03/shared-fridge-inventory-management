@@ -1,15 +1,18 @@
 import { plainToInstance } from "class-transformer";
-import { NotFoundException } from "@nestjs/common";
+import { NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { prisma } from "../../../lib/prisma";
 import { UpdateRecipeBody } from "../../../contracts/updateRecipe.body";
 import { RecipeView } from "../../../contracts/recipe.view";
 
-export const update = async (idString: string, body: UpdateRecipeBody): Promise<RecipeView>  => {
+export const update = async (userId: string, idString: string, body: UpdateRecipeBody): Promise<RecipeView>  => {
     const recipe = await prisma.recipe.findUnique({
       where: { id: idString },
     })
     if (!recipe) {
       throw new NotFoundException("Recipe not found");
+    }
+    if (recipe.userId !== userId) {
+        throw new UnauthorizedException("You are not the owner of this recipe");
     }
 
 	const updateData: any = {};

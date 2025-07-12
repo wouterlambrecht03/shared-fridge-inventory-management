@@ -11,9 +11,9 @@ export class RecipeBody {
 	@IsString()
 	public description: string;
 
-	@Expose()
-	@IsUUID()
-	public userId: string;
+	// @Expose()
+	// @IsUUID()
+	// public userId: string;
 
 	// @Expose()
 	// @IsArray()

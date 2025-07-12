@@ -7,6 +7,7 @@ import { update } from "../../controllers/users/handlers/update.handler";
 import { prisma } from "../../lib/prisma";
 import bcrypt from "bcryptjs";
 import { UserBody } from "../../contracts/user.body";
+import { UpdateUserBody } from "../../contracts/updateUser.body";
 
 const userFixtures = [
 	{
@@ -93,7 +94,7 @@ describe("Users handler tests", () => {
     });
 
     it("should update user", async () => {
-        const body = { firstName: "updated"} as UserBody;
+        const body = { firstName: "updated"} as UpdateUserBody;
         const res = await update(users[0].id, body);
         expect(res.firstName).equal("updated");
     });

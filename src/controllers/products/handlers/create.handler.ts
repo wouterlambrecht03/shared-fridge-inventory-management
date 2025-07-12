@@ -4,9 +4,8 @@ import { ProductBody } from "../../../contracts/product.body";
 import { ProductView } from "../../../contracts/product.view";
 import { BadRequestException, NotFoundException } from "@nestjs/common";
 
-export const create = async (body: ProductBody): Promise<ProductView>  => {
+export const create = async (userId: string, body: ProductBody): Promise<ProductView>  => {
     // TODO: transaction?
-    // TODO: check user?
     const fridge = await prisma.fridge.findUnique({
         where: { id: body.fridgeId },
     })
@@ -24,7 +23,7 @@ export const create = async (body: ProductBody): Promise<ProductView>  => {
     }
 
 	const product = await prisma.product.create({
-		data: body,
+		data: {...body, userId}
 	});
 
 	return plainToInstance(ProductView, product);
