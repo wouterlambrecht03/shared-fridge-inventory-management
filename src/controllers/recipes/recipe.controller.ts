@@ -10,6 +10,8 @@ import { update } from "./handlers/update.handler";
 import { getList } from "./handlers/getList.handler";
 import { get } from "./handlers/get.handler";
 import { getMissingProducts } from "./handlers/getMissingProducts.handler";
+import { getRecipeSuggestions } from "./handlers/getRecipeSuggestions.handler";
+import { RecipeSuggestion } from "../../contracts/recipeSuggestion.view";
 
 @ApiTags("recipes")
 @Controller("recipes")
@@ -73,5 +75,15 @@ export class RecipeController {
 	async getMissingProductList(@Req() req: Request, @Param("id") id: string): Promise<string[]>  {
 		const userId = req["user"]?.userId;
 		return getMissingProducts(userId, id);
+	}
+
+	@Get(":id/suggestions")
+	@UseGuards(JwtAuthGuard)
+	@ApiSecurity("x-auth")
+	@ApiOperation({ summary: "Get recipe suggestions based on available ingredients" })
+	@ApiResponse({ status: 200, description: "Recipes generated successfully" })
+	async getRecipeSuggestions(@Req() req: Request): Promise<RecipeSuggestion[]>  {
+		const userId = req["user"]?.userId;
+		return getRecipeSuggestions(userId);
 	}
 }
